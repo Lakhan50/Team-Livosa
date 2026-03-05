@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>InvisoPollutant Tracker</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+min-height:100vh;
+background: linear-gradient(-45deg,#0f2027,#203a43,#2c5364,#000000);
+background-size:400% 400%;
+animation:gradient 10s ease infinite;
+color:white;
+}
+
+@keyframes gradient{
+0%{background-position:0% 50%;}
+50%{background-position:100% 50%;}
+100%{background-position:0% 50%;}
+}
+
+.container{
+text-align:center;
+padding:50px 20px;
+}
+
+h1{
+font-size:42px;
+font-weight:700;
+background:linear-gradient(90deg,#00f2fe,#4facfe);
+-webkit-background-clip:text;
+color:transparent;
+}
+
+.subtitle{
+margin-top:10px;
+opacity:0.8;
+font-size:18px;
+}
+
+.btn{
+padding:12px 35px;
+border:none;
+border-radius:40px;
+font-size:16px;
+cursor:pointer;
+transition:0.3s;
+font-weight:600;
+margin-top:15px;
+}
+
+.dashboard-btn{
+background:#00c6ff;
+box-shadow:0 0 15px #00c6ff;
+}
+
+.symptom-btn{
+background:#8e2de2;
+box-shadow:0 0 15px #8e2de2;
+}
+
+.btn:hover{
+transform:scale(1.05);
+box-shadow:0 0 30px white;
+}
+
+.auth-box{
+margin-top:40px;
+max-width:400px;
+margin-left:auto;
+margin-right:auto;
+padding:40px;
+border-radius:25px;
+background:rgba(255,255,255,0.08);
+backdrop-filter:blur(15px);
+box-shadow:0 0 25px rgba(0,255,255,0.2);
+}
+
+.auth-box input{
+width:100%;
+padding:12px;
+margin:10px 0;
+border:none;
+border-radius:20px;
+outline:none;
+background:rgba(255,255,255,0.15);
+color:white;
+}
+
+.auth-box input::placeholder{
+color:#ddd;
+}
+
+.switch{
+margin-top:15px;
+}
+
+.switch span{
+color:#00f2fe;
+cursor:pointer;
+}
+
+.dashboard{
+margin-top:40px;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:30px;
+}
+
+.card{
+background:rgba(255,255,255,0.08);
+border-radius:25px;
+padding:30px;
+backdrop-filter:blur(12px);
+box-shadow:0 0 20px rgba(0,255,255,0.2);
+}
+
+.value{
+font-size:28px;
+margin-top:10px;
+}
+
+.logout{
+margin-top:30px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>InvisoPollutant Tracker</h1>
+<p class="subtitle">Smart Gas & Environment Monitoring</p>
+
+<!-- LOGIN -->
+
+<div class="auth-box" id="loginForm">
+
+<h2>Login</h2>
+
+<input type="email" id="loginEmail" placeholder="Email">
+
+<input type="password" id="loginPassword" placeholder="Password">
+
+<button class="btn dashboard-btn" onclick="login()">Login</button>
+
+<p class="switch">
+Don't have account?
+<span onclick="showSignup()">Signup</span>
+</p>
+
+</div>
+
+
+<!-- SIGNUP -->
+
+<div class="auth-box" id="signupForm" style="display:none;">
+
+<h2>Signup</h2>
+
+<input type="text" id="signupName" placeholder="Full Name">
+
+<input type="email" id="signupEmail" placeholder="Email">
+
+<input type="password" id="signupPassword" placeholder="Password">
+
+<button class="btn symptom-btn" onclick="signup()">Create Account</button>
+
+<p class="switch">
+Already have account?
+<span onclick="showLogin()">Login</span>
+</p>
+
+</div>
+
+
+<!-- DASHBOARD -->
+
+<div id="dashboard" style="display:none;">
+
+<h2 id="welcomeUser"></h2>
+
+<div class="dashboard">
+
+<div class="card">
+<h3>Temperature</h3>
+<p class="value" id="temp">-- °C</p>
+</div>
+
+<div class="card">
+<h3>Humidity</h3>
+<p class="value" id="humidity">-- %</p>
+</div>
+
+<div class="card">
+<h3>LPG Gas</h3>
+<p class="value" id="gas">-- ppm</p>
+</div>
+
+<div class="card">
+<h3>Air Quality</h3>
+<p class="value" id="air">-- AQI</p>
+</div>
+
+</div>
+
+<button class="btn symptom-btn logout" onclick="logout()">Logout</button>
+
+</div>
+
+
+<script>
+
+function signup(){
+
+let name=document.getElementById("signupName").value
+let email=document.getElementById("signupEmail").value
+let password=document.getElementById("signupPassword").value
+
+if(name==""||email==""||password==""){
+alert("Please fill all fields")
+return
+}
+
+let user={
+name:name,
+email:email,
+password:password
+}
+
+localStorage.setItem(email,JSON.stringify(user))
+
+alert("Signup Successful!")
+
+showLogin()
+
+}
+
+
+function login(){
+
+let email = document.getElementById("loginEmail").value
+let password = document.getElementById("loginPassword").value
+
+let storedUser = JSON.parse(localStorage.getItem(email))
+
+if(storedUser && storedUser.password === password){
+
+localStorage.setItem("loggedInUser", email)
+
+window.location.href = "main.html"
+
+}
+else{
+alert("Invalid Email or Password")
+}
+
+}
+
+function logout(){
+
+localStorage.removeItem("loggedInUser")
+
+location.reload()
+
+}
+
+
+function showSignup(){
+document.getElementById("loginForm").style.display="none"
+document.getElementById("signupForm").style.display="block"
+}
+
+function showLogin(){
+document.getElementById("signupForm").style.display="none"
+document.getElementById("loginForm").style.display="block"
+}
+
+
+window.onload=function(){
+
+if(localStorage.getItem("loggedInUser")){
+loadDashboard()
+}
+
+}
+
+</script>
+
+</body>
+</html>
